@@ -3,11 +3,8 @@
 
 #include <memory>
 
-
-
 template<typename T> struct BStrNode;
 template<typename T> class bsTree;
-template<typename T> class Tree;
 
 template<typename T>
 using wPtrBStr = std::weak_ptr<BStrNode<T>>;
