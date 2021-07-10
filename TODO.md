@@ -1,7 +1,6 @@
 # TREE
 
-- [ ] Tree Interface 
-- [ ] Binary Tree Interface
+- [x] Binary Tree Interface
 - [ ] Binary Search Tree
 - [ ] Red-Black Tree
 - [ ] AVL Tree

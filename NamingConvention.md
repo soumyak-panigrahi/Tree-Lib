@@ -75,3 +75,25 @@ and sub specification is about is it L-value refrence or R-value reference. i.e.
 So, LR refrence can be done easily , therefore no aliases.
 
 The convention is `const shared_ptr` == `c_sPtr` and `shared_ptr<const int>` == `csPtr`
+
+## Interfaces
+
+In interfaces we need to be as robust as possible, so we try to include full tree name or Abbrev. name
+whichever that doesn't lead to confusin. To identify as interface we include 'I' (capital i) at the start
+then in small either full or Abbrev. then at the end 'Tree'
+
+Type 1 :-
+````
+'I' + Full or Abbrev. (in small) + 'Tree'
+````
+eg. IrbTree , IbsTree , IbinaryTree , IavlTree etc.
+
+or 
+
+Type 2 :-
+`````
+'I_' + Node convention (don't add the word Node at the end)
+`````
+eg. I_RBtr , I_BStr , I_AVLtr , I_BINARYtr , etc.
+
+Note:- In this library Type 2 convention will be used. 
