@@ -55,8 +55,9 @@ eg. BStrNode , RBtrNode , AVLtrNode etc.
 
 ### Pointer 
 
-Similar convention as Node but it will be attached before,
-this will be used to specify Aliases.
+Similar convention as Node but it will be attached before, this will be used to specify Aliases.
+Note, the pointer is for the node ranther than tree itself. We have omitted 'Node' at the end
+as we assumed the user will make it pointer implementation if he wants.
 
 ````
 Pointer type Abbrev. (All small) + 'Ptr' + Abbrev. Name (All caps) + 'tr'
@@ -97,3 +98,7 @@ Type 2 :-
 eg. I_RBtr , I_BStr , I_AVLtr , I_BINARYtr , etc.
 
 Note:- In this library Type 2 convention will be used. 
+
+Similarly, we will also use these if we need to implement it's node and/or ptr.
+
+eg. I_RBtrNode , wPtrI_RBtr
