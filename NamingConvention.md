@@ -64,6 +64,12 @@ Pointer type Abbrev. (All small) + 'Ptr' + Abbrev. Name (All caps) + 'tr'
 ````
 eg. wPtrAVLtr , uPtrBStr , sPtrRBtr etc.
 
+If it is to node added 'Node' at end
+
+````
+Pointer type Abbrev. (All small) + 'Ptr' + Abbrev. Name (All caps) + 'tr' + 'Node'
+````
+eg. wPtrAVLtrNode , sPtrBStrNode etc.
 #### Micro Specification to Pointers
 
 Smart pointer can be of diiferent type, note we take shared_ptr\<int\> as our refrence , it applicable to any type of pointer and data type.
