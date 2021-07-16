@@ -6,15 +6,16 @@
 template<typename T, typename __type, typename node_type> struct I_BINARYtrNode;
 template<typename T, typename __type, typename node_type> class I_BINARYtr;
 
-//Aliases
+/** Aliases
+===========*/
+#ifndef __POINTER_ALIASES__
+#define __POINTER_ALIASES__
+template<typename T> using wPtr = std::weak_ptr<T>;
+template<typename T> using sPtr = std::shared_ptr<T>;
+#endif //__POINTER_ALIASES__
 
-template<typename T, typename __type, typename node_type>
-using wPtrI_BINARYtrNode = std::weak_ptr<I_BINARYtrNode<T, __type, node_type>>;
-
-template<typename T, typename __type, typename node_type>
-using sPtrI_BINARYtrNode = std::shared_ptr<I_BINARYtrNode<T, __type, node_type>>;
-
-
+/** Binary Tree Node Interface
+===============================*/
 template<typename T, typename __type, typename node_type>
 struct I_BINARYtrNode
 {
@@ -34,6 +35,9 @@ struct I_BINARYtrNode
     virtual bool set_right(std::weak_ptr<node_type>&) = 0;
 };
 
+
+/** Binary Tree Interface
+==========================*/
 template<typename T, typename __type, typename node_type>
 class I_BINARYtr
 {
