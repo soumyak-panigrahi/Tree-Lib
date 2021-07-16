@@ -1,7 +1,7 @@
 #ifndef __BASE_BINARY_SEARCH_TREE_NODE_H__
 #define __BASE_BINARY_SEARCH_TREE_NODE_H__
 
-#include "binaryTree.h"
+#include "binaryTree.hpp"
 #include <memory>
 
 /** Aliases

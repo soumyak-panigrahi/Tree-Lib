@@ -190,13 +190,15 @@ In other words,
 ``````````````
 
 Binary Tree Interface
+        ^
         |
         |
 Binary Search Tree Base Class
-    |               |
-BS Concrete Class   |
-                    |
-                AVL Concrete Class
+    ^                   ^
+    |                   |
+BS Concrete Class       |
+                        |
+                    AVL Concrete Class
 
 ``````````````
 In this the concrete don't interact only the Base classes are inhertiated.
@@ -205,11 +207,13 @@ Eg.
 
 ````````
 Binary Search Tree Base Class
+    ^                   ^
     |                   |
     |                   |
 AVL Concrete Class      |
                         |
                 AVL tree Base Class
+                        ^
                         |
                         |
                 Future AVL trees.....
