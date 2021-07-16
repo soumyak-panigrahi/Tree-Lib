@@ -108,3 +108,26 @@ Note:- In this library Type 2 convention will be used.
 Similarly, we will also use these if we need to implement it's node and/or ptr.
 
 eg. I_RBtrNode , wPtrI_RBtr
+
+## Base Classes
+
+**To just be on the same page**, I like to differenciate between Interfaces and Base Classes
+
+In Interface, we like define give guidelines to followed when the programmer is writing a class which is derived
+from the Interface, in the sense when we defining a class is a type of the Interface it must follow all the guideline
+it to be used otherwise it can't be used. In short, it is just guideline nothing more or less. So, we implement the guideline
+as it varies case to case. But interface can also contain the data memeber which are not object specific i.e static data type,
+and even method. 
+
+So , Interface == Guidelines + Universal Data + Universal Method 
+
+Note:- In C++ , universal means *static* type. In this Library we represent it by prefixing **I_**.
+
+In base class, it not neccesayily only consist of guideline and can also contain implementation and data according to the 
+need. So, in a way it is not totally generic (ofcourse all of these can be overridden) but it is useful if we doing same work 
+for a lot of diffrent classes. In other words it consist of a Interface and a Implementation.
+
+So, Base Classes == Interface + Implementation
+
+Note:- In this Library we represent it by prefixing **BASE_**.
+
