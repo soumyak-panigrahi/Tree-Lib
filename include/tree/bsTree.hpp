@@ -41,6 +41,14 @@ public:
     virtual void postorderTreeWalk() const noexcept;
     virtual void preorderTreeWalk() const noexcept;
     virtual wPtr<node_type> search(const T&) const noexcept;
+    virtual void rightRotate(const wPtr<node_type>&) noexcept;
+    virtual void leftRotate(const wPtr<node_type>&) noexcept;
+    virtual wPtr<node_type> treeMax() const noexcept;
+    virtual wPtr<node_type> treeMax(const wPtr<node_type>&) const noexcept;
+    virtual wPtr<node_type> treeMin() const noexcept;
+    virtual wPtr<node_type> treeMin(const wPtr<node_type>&) const noexcept;
+    virtual wPtr<node_type> treeSuccessor(const wPtr<node_type>&) const noexcept;
+    virtual wPtr<node_type> treePredecessor(const wPtr<node_type>&) const noexcept;
     virtual bool insert(const T&);
     virtual T remove(const wPtr<node_type>&) noexcept;
 };

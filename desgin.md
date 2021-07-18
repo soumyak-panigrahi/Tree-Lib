@@ -188,36 +188,44 @@ class approach we simply inheriate from Base class rather concrete of a base cla
 In other words,
 
 ``````````````
-
 Binary Tree Interface
         ^
         |
         |
 Binary Search Tree Base Class
-    ^                   ^
-    |                   |
-BS Concrete Class       |
-                        |
-                    AVL Concrete Class
-
+    ^                       ^
+    |                       |
+BS Concrete Class           |
+                            |
+                        AVL Concrete Class
 ``````````````
-In this the concrete don't interact only the Base classes are inhertiated.
+In this the concrete don't interact only the Base classes are inhertiated. So, if we have to inheriate a AVL tree rather
+than a Binary Search Tree, we first make Base class for AVL than from there we inheriate
 
 Eg.
 
 ````````
 Binary Search Tree Base Class
-    ^                   ^
-    |                   |
-    |                   |
-AVL Concrete Class      |
-                        |
-                AVL tree Base Class
-                        ^
-                        |
-                        |
-                Future AVL trees.....
+            ^                         
+            |                   
+            |
+            |                
+    AVL tree Base Class                    
+            ^
+            |
+            |
+    Future AVL tree Concrete Classes.....
 
 ````````
 
 This way we can focus what we use and will be used later.
+
+Note:- 
+You don't need to make Base class for every different type of Node you make, just make for those which are 
+extensively customized  like Binary Search Tree or Red - Black Tree. It is the programmer's wish if they think 
+that this particular tree can prefectly argumneted with efficiency. For example Red - Black Tree just takes one
+bit extra (for color) per node than a normal Binary Search Tree but give balanced conditions. So, any type 
+argumenting is efficient and so, you can make a base class for a Red - Black Tree whereas a AVL tree store a Height 
+data member (which stores height of the node as root) so as the tree grows the size of height data member should 
+also grow. Hence, argumenting is not as efficient as Red-Black. And again this **just a thought** in some cases AVL 
+tree may out grow. So, Again *depends on the program*. 
