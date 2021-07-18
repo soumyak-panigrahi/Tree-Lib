@@ -231,8 +231,9 @@ Note:-
 You don't need to make Base class for every different type of Node you make, just make for those which are 
 extensively customized  like Binary Search Tree or Red - Black Tree. It is the programmer's wish if they think 
 that this particular tree can prefectly argumneted with efficiency. For example Red - Black Tree just takes one
-bit extra (for color) per node than a normal Binary Search Tree but give balanced conditions. So, any type 
-argumenting is efficient and so, you can make a base class for a Red - Black Tree whereas a AVL tree store a Height 
-data member (which stores height of the node as root) so as the tree grows the size of height data member should 
-also grow. Hence, argumenting is not as efficient as Red-Black. And again this **just a thought** in some cases AVL 
-tree may out grow. So, Again *depends on the program*. 
+bit extra (for color) per node than a normal Binary Search Tree but give balanced conditions (For N node height 
+h is lg(N)<= h <=2\*lg(N)). Whereas AVL takes 2 extra bit than a normal Binary search Tree but it height for N
+node is lg(N). So, if we are using Red-Black Tree rather than AVL we are saving 1 bit per node but the of AVL
+is Perfect whereas the Red-Black's varies upto 2\*lg(N). Therefore, while argumenting (adding extra information 
+for efficiency of a particular task) either we can save N bit or we can have perfect height. So, what will be
+useful **depends on task**. So, use it where your resources are limited for that. 
