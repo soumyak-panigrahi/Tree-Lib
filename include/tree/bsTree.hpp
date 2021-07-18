@@ -2,6 +2,7 @@
 #define __BS_TREE_H__
 
 #include "BASE_BstrNode.hpp"
+#include "binaryTree.hpp"
 #include <iostream>
 #include <memory>
 
@@ -30,11 +31,12 @@ struct BStrNode : public BASE_BStrNode<T, __type, BStrNode<T, __type>>
 /** Binary Search Tree's Class Deleclaration
 =============================================*/
 template<typename T, typename __type = T, typename node_type = BStrNode<T, __type>>
-class bsTree : public I_BINARYtr
+class bsTree : public I_BINARYtr<T, __type, node_type>
 {
 public:
     bsTree() : NIL{ std::make_shared<node_type>() }, root{ NIL }, size{ 0 } { }
     virtual size_t height(const wPtr<node_type>&) const noexcept;
+    virtual size_t height() const noexcept { return this->height(root); }
     virtual void inorderTreeWalk() const noexcept;
     virtual void postorderTreeWalk() const noexcept;
     virtual void preorderTreeWalk() const noexcept;
@@ -73,7 +75,7 @@ void bsTree<T, __type, node_type>::preorderTreeWalk() const noexcept
                 x = x->right;
             else
                 x = x->p.lock();
-        } else if (x->left == prev && x->right) {
+        } else if (x->left == prev && (x->right != NIL)) {
             prev = x;
             x = x->right;
         } else {
@@ -89,7 +91,7 @@ void bsTree<T, __type, node_type>::inorderTreeWalk() const noexcept
 {
     auto x{ root }, prev{ x->p.lock() };
     while (x != NIL) {
-        if (prev == x->p.lock && x->left) {
+        if ((prev == x->p.lock()) && (x->left != NIL)) {
             prev = x;
             x = x->left;
         } else if ((prev == x->p.lock()) || (prev == x->left)) {
@@ -101,7 +103,7 @@ void bsTree<T, __type, node_type>::inorderTreeWalk() const noexcept
                 x = x->p.lock();
         } else {
             prev = x;
-            x = x->p.lock()
+            x = x->p.lock();
         }
     }
     return;
@@ -112,7 +114,7 @@ void bsTree<T, __type, node_type>::postorderTreeWalk() const noexcept
 {
     auto x{ root }, prev{ x->p.lock() };
     while (x != NIL) {
-        if (prev == x->p.lock && x->right) {
+        if ((prev == x->p.lock()) && (x->right != NIL)) {
             prev = x;
             x = x->right;
         } else if ((prev == x->p.lock()) || (prev == x->right)) {
@@ -124,7 +126,7 @@ void bsTree<T, __type, node_type>::postorderTreeWalk() const noexcept
                 x = x->p.lock();
         } else {
             prev = x;
-            x = x->p.lock()
+            x = x->p.lock();
         }
     }
     return;
@@ -133,13 +135,10 @@ void bsTree<T, __type, node_type>::postorderTreeWalk() const noexcept
 template<typename T, typename __type, typename node_type>
 size_t bsTree<T, __type, node_type>::height(const wPtr<node_type>& ptr) const noexcept
 {
-    if (!ptr.expired || ptr.lock() == NIL) {
+    if (!ptr.expired() && ptr.lock() != NIL) {
         auto x{ ptr.lock() };
         auto lh{ this->height(x->left) }, rh{ this->height(x->right) };
-        if (lh > rh)
-            return lh + 1;
-        else
-            return rh + 1;
+        return (lh > rh ? lh : rh) + 1;
     }
     return 0;
 }
@@ -173,9 +172,9 @@ template<typename T, typename __type, typename node_type>
 wPtr<node_type> bsTree<T, __type, node_type>::treeMin(const wPtr<node_type>& ptr) const noexcept
 {
     if (!ptr.expired()) {
-        auto x{ ptr.lock() }
-            while (x->left != NIL)
-                x = x->left;
+        auto x{ ptr.lock() };
+        while (x->left != NIL)
+            x = x->left;
         return x;
     }
     return ptr;
@@ -289,7 +288,7 @@ T bsTree<T, __type, node_type>::remove(const wPtr<node_type>& ptr) noexcept
             y->left->p = y;
         }
         size--;
-        return x->data:
+        return x->data;
     }
     return T{};
 }
@@ -312,7 +311,7 @@ void bsTree<T, __type, node_type>::leftRotate(const wPtr<node_type>& ptr) noexce
             } else
                 root = y;
             y->p = x->p;
-            y->right = x;
+            y->left = x;
             x->p = y;
         }
     }
@@ -337,7 +336,7 @@ void bsTree<T, __type, node_type>::rightRotate(const wPtr<node_type>& ptr) noexc
             } else
                 root = y;
             y->p = x->p;
-            y->left = x;
+            y->right = x;
             x->p = y;
         }
     }

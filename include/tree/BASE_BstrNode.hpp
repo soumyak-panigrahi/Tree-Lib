@@ -18,25 +18,25 @@ template<typename T, typename __type, typename node_type>
 struct BASE_BStrNode : public I_BINARYtrNode<T, __type, node_type>
 {
     T data;
-    std::weak_ptr<node_type> p;
-    std::shared_ptr<node_type> left, right;
+    wPtr<node_type> p;
+    sPtr<node_type> left, right;
 
     BASE_BStrNode(const T& x = T{}) : data{ x }, left{ nullptr }, right{ nullptr } { }
 
-    virtual const __type read() const noexcept { __type temp{ data }; return temp }
+    virtual const __type read() const noexcept { __type temp{ data }; return temp; }
     virtual bool write(const __type& x) { data = x; return true; }
 
     virtual bool set_data(const T&);
     virtual T get_data() const noexcept { return data; }
 
-    virtual std::weak_ptr<node_type> get_parent() const noexcept { return p; }
-    virtual bool set_parent(std::weak_ptr<node_type>&);
+    virtual wPtr<node_type> get_parent() const noexcept { return p; }
+    virtual bool set_parent(wPtr<node_type>&);
 
-    virtual std::weak_ptr<node_type> get_left() const noexcept { return left; }
-    virtual bool set_left(std::weak_ptr<node_type>&);
+    virtual wPtr<node_type> get_left() const noexcept { return left; }
+    virtual bool set_left(wPtr<node_type>&);
 
-    virtual std::weak_ptr<node_type> get_right() const noexcept { return right; }
-    virtual bool set_right(std::weak_ptr<node_type>&);
+    virtual wPtr<node_type> get_right() const noexcept { return right; }
+    virtual bool set_right(wPtr<node_type>&);
 
     ~BASE_BStrNode() = default;
 };
@@ -52,7 +52,7 @@ bool BASE_BStrNode<T, __type, node_type>::set_data(const T& x)
 }
 
 template<typename T, typename __type, typename node_type>
-bool BASE_BStrNode<T, __type, node_type>::set_parent(std::weak_ptr<node_type>& ptr)
+bool BASE_BStrNode<T, __type, node_type>::set_parent(wPtr<node_type>& ptr)
 {
     if (!ptr.expired()) {
         p = ptr;
@@ -62,7 +62,7 @@ bool BASE_BStrNode<T, __type, node_type>::set_parent(std::weak_ptr<node_type>& p
 }
 
 template<typename T, typename __type, typename node_type>
-bool BASE_BStrNode<T, __type, node_type>::set_left(std::weak_ptr<node_type>& ptr)
+bool BASE_BStrNode<T, __type, node_type>::set_left(wPtr<node_type>& ptr)
 {
     if (!ptr.expired()) {
         left = ptr;
@@ -72,7 +72,7 @@ bool BASE_BStrNode<T, __type, node_type>::set_left(std::weak_ptr<node_type>& ptr
 }
 
 template<typename T, typename __type, typename node_type>
-bool BASE_BStrNode<T, __type, node_type>::set_right(std::weak_ptr<node_type>& ptr)
+bool BASE_BStrNode<T, __type, node_type>::set_right(wPtr<node_type>& ptr)
 {
     if (!ptr.expired()) {
         right = ptr;
