@@ -142,14 +142,14 @@ Dynamic Binding or Providing node_type template parameter.
 ##### Dynamic Binding
 
 In this we will have a generic function to set attribute which will implemented by future Classes. So, in this we will have a 
-class we will inheriate from it as use dynamic binding to change it's attribute. Here, the unplesentness invoke as it diffucult
+class we will inheriate from it and use dynamic binding to change it's attribute. Here, the unplesentness invoke as it diffucult
 judge the future attribute and so we have to provide different rules to that. In this case Only concrete class suffices and
 we don't need base class.
 
 ##### Providing node_type template parameter
 
-To do this we have to implement the base class. As this will have a attribute node_type and to fulfil it we have to provide
-a node let say we are argumenting the node itself, in other words
+To do this we have to implement the base class. As this will have a template parameter node_type and to fulfil it we have to 
+provide a node let say we are argumenting the node itself, in other words
 
 `````````
 template<T , __type , node_type>
@@ -160,15 +160,22 @@ node
 
 node<T, __type ,node<T,__type,?>> // Forms recursive and creates a problems
 `````````
-So, avoid this recursive problem , the class which take the node_type parameter will the Base class which will be used in future
-as ...
+So, to avoid this recursive problem , the class which take the node_type parameter will the Base class which will be used in 
+future as ...
 
 ``````````
 template<T, __type, node_type> class Base_class;
 template<T, __type> class Future_classes;
 
+template<T, __type, node_type> 
+class Base_class
+{
+    T data;
+    node_type *p , *left , *right;
+}
+
 template<T, __type>
-Future_classes : Base_class<T, __type,Future_classes<T,__type>> // no recursive problem
+Future_classes : Base_class<T, __type,Future_classes<T,__type>> // no recursive problem and node_type will be of Future_classes
 {
     // Proceed here;
 };
@@ -182,7 +189,7 @@ suppose let say AVL tree it has a extra data member call height (which store hei
 directly interact we have work it through dynamic binding as the pointer it inheriate is of the type Binary Tree with pointing
 to a AVL tree node to manage this we have make a function like set_height() or more generic set(type,data). This is a pain as we
 cannot predict the future attributes. it is better to hold the pointers of itself at the generic level. So, this solved by use
-of above base class and we are providing the node_type as itself or according to your will you be expand. Now, in this base 
+of above base class and we are providing the node_type as itself or according to your will to expand. Now, in this base 
 class approach we simply inheriate from Base class rather concrete of a base class.
 
 In other words,
@@ -192,11 +199,11 @@ Binary Tree Interface
         ^
         |
         |
-Binary Search Tree Base Class
-    ^                       ^
-    |                       |
-BS Concrete Class           |
-                            |
+    Binary Search Tree Base Class
+    ^                           ^
+    |                           |
+BS Concrete Class               |
+                                |
                         AVL Concrete Class
 ``````````````
 In this the concrete don't interact only the Base classes are inhertiated. So, if we have to inheriate a AVL tree rather
