@@ -11,6 +11,7 @@ struct BASE_RBtrNode : public BASE_BStrNode<T, __type, node_type>
     BASE_RBtrNode(const T& x = T{}) : BASE_BStrNode<T, __type, node_type>(x), color{ false } { }
     virtual bool set_color(bool c) noexcept { color = c; return color; }
     virtual bool get_color(bool c) const noexcept { return color; }
+    virtual ~BASE_RBtrNode() = default;
 };
 
 #endif //__BASE_RBTRNODE_HPP__

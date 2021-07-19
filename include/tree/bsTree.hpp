@@ -24,7 +24,7 @@ template<typename T> using sPtr = std::shared_ptr<T>;
 template<typename T, typename __type>
 struct BStrNode : public BASE_BStrNode<T, __type, BStrNode<T, __type>>
 {
-    BStrNode(T x = T{}) : BASE_BStrNode<T, __type, BStrNode<T, __type>>() { }
+    BStrNode(T x = T{}) : BASE_BStrNode<T, __type, BStrNode<T, __type>>(x) { }
     virtual ~BStrNode() = default;
 };
 
@@ -43,13 +43,13 @@ public:
     virtual wPtr<node_type> search(const T&) const noexcept;
     virtual void rightRotate(const wPtr<node_type>&) noexcept;
     virtual void leftRotate(const wPtr<node_type>&) noexcept;
-    virtual wPtr<node_type> treeMax() const noexcept { return this->treeMax(root); }
+    virtual T treeMax() const noexcept { auto x = this->treeMax(root).lock(); return x->data; }
     virtual wPtr<node_type> treeMax(const wPtr<node_type>&) const noexcept;
-    virtual wPtr<node_type> treeMin() const noexcept { return this->treeMin(root); }
+    virtual T treeMin() const noexcept { auto x = this->treeMin(root).lock(); return x->data; }
     virtual wPtr<node_type> treeMin(const wPtr<node_type>&) const noexcept;
     virtual wPtr<node_type> treeSuccessor(const wPtr<node_type>&) const noexcept;
     virtual wPtr<node_type> treePredecessor(const wPtr<node_type>&) const noexcept;
-    virtual bool insert(const T&);
+    virtual wPtr<node_type> insert(const T&);
     virtual T remove(const wPtr<node_type>&) noexcept;
 protected:
     const sPtr<node_type> NIL;
@@ -221,7 +221,7 @@ wPtr<node_type> bsTree<T, __type, node_type>::treePredecessor(const wPtr<node_ty
 }
 
 template<typename T, typename __type, typename node_type>
-bool bsTree<T, __type, node_type>::insert(const T& k)
+wPtr<node_type> bsTree<T, __type, node_type>::insert(const T& k)
 {
     auto x{ root };
     auto y{ x };
@@ -234,7 +234,7 @@ bool bsTree<T, __type, node_type>::insert(const T& k)
     }
     auto z = std::make_shared<node_type>();
     if (!z)
-        return false;
+        return wPtr<node_type>();
     z->data = k;
     z->left = z->right = NIL;
     z->p = y;
@@ -245,7 +245,7 @@ bool bsTree<T, __type, node_type>::insert(const T& k)
     else
         y->left = z;
     size++;
-    return true;
+    return z;
 }
 
 template<typename T, typename __type, typename node_type>

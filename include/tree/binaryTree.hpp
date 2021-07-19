@@ -47,7 +47,7 @@ public:
     virtual void postorderTreeWalk() const noexcept = 0;
     virtual void preorderTreeWalk() const noexcept = 0;
     virtual std::weak_ptr<node_type> search(const T&) const noexcept = 0;
-    virtual bool insert(const T&) = 0;
+    virtual std::weak_ptr<node_type> insert(const T&) = 0;
     virtual T remove(std::weak_ptr<node_type>&) noexcept = 0;
 };
 
