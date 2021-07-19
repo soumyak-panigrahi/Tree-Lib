@@ -458,4 +458,441 @@ T rbTree<T, __type, node_type>::remove(const wPtr<node_type>& ptr) noexcept
     return T{};
 }
 
+template<typename T, typename __type, typename node_type>
+void rbTree<T, __type, node_type>::removeFixup(const wPtr<node_type>& ptr) noexcept
+{
+    if (!ptr.expired()) {
+        auto x{ ptr.lock() };
+        while ((!x->color) && x != root) {
+            auto p{ x->p.lock() };
+            if (x == p->left) {
+                auto w{ p->right };
+                // X's Sibling is RED
+                if (w->color) {
+                    //CASE - 1 , x's sibling is RED
+
+                    /**
+                     * @brief
+                     *  x.color = black;
+                     *  p.color = black;
+                     *  w.color = red;
+                     *
+                     * @note (A) denotes Black node , (*A) denotes Red Node and (*)A) denotes ambiguous colored node.
+                     *        lA means left child of A and rA means right child of A. All node will be denoted with all caps.
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | h+1
+                     *                           |
+                     *                          (P)
+                     *                         /   \
+                     *                     h-1/     \h
+                     *                       /       \
+                     *                     (X)       (*W)
+                     *                              /    \
+                     *                            h/      \h
+                     *                            /        \
+                     *                          (lW)       (rW)
+                     *
+                     * now all properties hold, except that all children should have same black height. Which violeted at P.
+                     * This can be simply retified by left rotating at p because we like adjust height to adjust the tree.
+                     *
+                     * @note Our aim is to rectify from above.
+                     *
+                     * After, left rotating at p.
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | h (--- Overall Height)
+                     *                           |
+                     *                          (*W)                                   ----- 1st Level
+                     *                         /   \
+                     *                       h/     \h
+                     *                       /       \
+                     *                     (P)       (rW)                               ---- 2nd Level
+                     *                    /   \
+                     *                h-1/     \h
+                     *                  /       \
+                     *                (X)       (lW)                                     ---- 3rd Level
+                     *
+                     * Now the violation occur at the 3rd level, in this the sibling is black which will be delt in another
+                     * case. So, let just try balance above 3rd level, as we can see the overall height was h+1, but now it
+                     * is h. It can be easy rectify br making was black.
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | h+1 (--- Overall Height)
+                     *                           |
+                     *                          (W)                                     ---- 1st Level
+                     *                         /   \
+                     *                       h/     \h
+                     *                       /       \
+                     *                     (P)       (rW)                               ---- 2nd Level
+                     *                    /   \
+                     *                h-1/     \h
+                     *                  /       \
+                     *                (X)       (lW)                                     ---- 3rd Level
+                     */
+
+                    w->color = false;
+                    this->leftRotate(p);
+                    w = p->right;
+                }
+                // X's Sibling is BLACK
+                if (!w->right->color && !w->left->color) {
+                    //CASE - 2 , x's sibling is black and both of it's children are black.
+                    /**
+                     * @brief
+                     *  x.color = black
+                     *  w.color = black
+                     *  w->left.color = black
+                     *  w->right.color = black
+                     *  p.color = "Ambiguous"
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | ?
+                     *                           |
+                     *                         (*)P)                                  ----- LEVEL 1
+                     *                         /   \
+                     *                     h-1/     \h
+                     *                       /       \
+                     *                     (X)       (W)                               ------ LEVEL 2
+                     *                              /   \
+                     *                            h/     \h
+                     *                            /       \
+                     *                          (lW)       (rW)                         ------- LEVEL 3
+                     *
+                     * So, the color of P is ambiguous and we will talk about it ina moment. See in LEVEL 2, the black
+                     * height violation occurs. So, let try to rectify that first to do so we make W's color color
+                     * red.
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | h+1
+                     *                           |
+                     *                         (*)P)                                  ----- LEVEL 1
+                     *                         /   \
+                     *                     h-1/     \h-1
+                     *                       /       \
+                     *                     (X)       (*W)                               ------ LEVEL 2
+                     *                              /    \
+                     *                            h/      \h
+                     *                            /        \
+                     *                          (lW)        (rW)                         ------- LEVEL 3
+                     *
+                     * Now as the violation is rectified at level 2, but still the overall tree may still have violation,
+                     * accordingly if P is RED or BLACK.
+                     *
+                     * Let, P.color = RED
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | h-1 (previously h)
+                     *                           |
+                     *                          (*P)                                  ----- LEVEL 1
+                     *                         /   \
+                     *                     h-1/     \h-1
+                     *                       /       \
+                     *                     (X)       (*W)                               ------ LEVEL 2
+                     *                              /    \
+                     *                            h/      \h
+                     *                            /        \
+                     *                          (lW)        (rW)                         ------- LEVEL 3
+                     *
+                     * The overall height is now h-1, but before the height was h as the height of W was h, and as
+                     * it is red it doesn't effect overall height. So, to rectify this it is simple we will make
+                     * p as Black, it is done just at the end of loop. So, new X becomes P and the loop end.
+                     *
+                     * Let, P.color = BLACK
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | h (previously h+1)
+                     *                           |
+                     *                          (P)                                  ----- LEVEL 1
+                     *                         /   \
+                     *                     h-1/     \h-1
+                     *                       /       \
+                     *                     (X)       (*W)                               ------ LEVEL 2
+                     *                              /    \
+                     *                            h/      \h
+                     *                            /        \
+                     *                          (lW)        (rW)                         ------- LEVEL 3
+                     *
+                     * so, if P is black node, the overall subtree node is decreased by 1. So, in other words
+                     * it became a recursive problem. SO, the new X will P and the loop will Continue.
+                     */
+
+                    w->color = true;
+                    x = p;
+                } else {
+                    if (!w->right->color) {
+
+                        //CASE - 3, x's sibling is black and it's right child is black.
+
+                        /**
+                         * @brief
+                         *  x.color = black
+                         *  w.color = black
+                         *  w->right.color = BLACK
+                         *  w->left.color = RED
+                         *  p.color = "Ambiguous"
+                         *
+                         * @attention the present tree looks like
+                         *
+                         *                           |
+                         *                           | ?
+                         *                           |
+                         *                         (*)P)                                  ----- LEVEL 1
+                         *                         /   \
+                         *                     h-1/     \h
+                         *                       /       \
+                         *                     (X)       (W)                               ------ LEVEL 2
+                         *                              /   \
+                         *                          h-1/     \h-1
+                         *                            /       \
+                         *                         (*lW)      (rW)                         ------- LEVEL 3
+                         *
+                         * let me say this one more time, to balnce we have to rotate :) . So the simple idea is to left rotate at
+                         * P as right rotating will just unbalnce more.
+                         *
+                         * @attention the present tree looks like after left rotating at P
+                         *
+                         *                           |
+                         *                           | ?
+                         *                           |
+                         *                          (W)                                    ----- LEVEL 1
+                         *                         /   \
+                         *                       ?/     \h-1
+                         *                       /       \
+                         *                   (*)P)       (rW)                                 ----- LEVEL 2
+                         *                    /   \
+                         *                h-1/     \h-1
+                         *                  /       \
+                         *               (X)        (*lW)                                      ------- LEVEL 3
+                         *
+                         * So, p is ambiguous. so let make it black as lw is red.
+                         *
+                         * @attention the present tree looks like after left rotating at P
+                         *
+                         *                           |
+                         *                           | ?
+                         *                           |
+                         *                          (W)                                    ----- LEVEL 1
+                         *                         /   \
+                         *                       h/     \h-1
+                         *                       /       \
+                         *                     (P)       (rW)                                 ----- LEVEL 2
+                         *                    /   \
+                         *                h-1/     \h-1
+                         *                  /       \
+                         *               (X)        (*lW)                                      ------- LEVEL 3
+                         *
+                         * Now black height is inbalanced at LEVEL 2. Let see what could we have done before to make it balanced
+                         * without roatating further. So, Genral idea if so happen rW to be Red, we can instantaneously make it
+                         * black without any futher problem and W would take up p's place as it's up and above from LEVEL 1
+                         * has no violation. Let do that let make rW as red if it is possible to make. Which is CASE - 3
+                         *
+                         * @attention the present tree looks like
+                         *
+                         *                           |
+                         *                           | ?
+                         *                           |
+                         *                         (*)P)                                  ----- LEVEL 1
+                         *                         /   \
+                         *                     h-1/     \h
+                         *                       /       \
+                         *                     (X)       (W)                               ------ LEVEL 2
+                         *                              /   \
+                         *                          h-1/     \h-1
+                         *                            /       \
+                         *                         (*lW)      (rW)                         ------- LEVEL 3
+                         *                         /    \
+                         *                     h-1/      \h-1
+                         *                       /        \
+                         *                     (llW)     (rlW)
+                         *
+                         * We can see, left child of W is red, our aim is to be make rW's position node red. We can do that
+                         * by first right rotating at W because lW 's children black heights are same as the black height of
+                         * right child of W, this is useful as after rotating we can make W as RED which first acheive our
+                         * aim, second balance the Black height. Let first right rotate at W.
+                         *
+                         * @attention the present tree looks like
+                         *
+                         *                           |
+                         *                           | ?
+                         *                           |
+                         *                         (*)P)                                  ----- LEVEL 1
+                         *                         /   \
+                         *                     h-1/     \h-1
+                         *                       /       \
+                         *                     (X)       (*lW)                               ------ LEVEL 2
+                         *                              /   \
+                         *                          h-1/     \h
+                         *                            /       \
+                         *                         (llW)      (W)                         ------- LEVEL 3
+                         *                                    /  \
+                         *                                h-1/    \h-1
+                         *                                  /      \
+                         *                              (rlW)      (rlW)
+                         *
+                         * To balance at LEVEL 3 we will make W as RED (which we want) and as now overall subtree black
+                         * height is decreased by one we will have lw as black.
+                         *
+                         * @attention the present tree looks like
+                         *
+                         *                           |
+                         *                           | ?
+                         *                           |
+                         *                         (*)P)                                  ----- LEVEL 1
+                         *                         /   \
+                         *                     h-1/     \h
+                         *                       /       \
+                         *                     (X)       (lW)                               ------ LEVEL 2
+                         *                              /   \
+                         *                          h-1/     \h-1
+                         *                            /       \
+                         *                         (llW)      (*W)                         ------- LEVEL 3
+                         *                                    /  \
+                         *                                h-1/    \h-1
+                         *                                  /      \
+                         *                              (rlW)      (rlW)
+                         */
+
+                        w->color = true;
+                        w->left->color = false;
+                        this->rightRotate(w);
+                        w = w->p.lock();
+                    }
+
+                    //CASE - 4, x's sibling is black and w's right child is RED.
+
+                    /**
+                     * @brief
+                     *  x.color = black
+                     *  w.color = black
+                     *  w->right.color = red
+                     *  w->left.color = "Ambiguous"
+                     *  p.color = "Ambiguous"
+                     *
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | ?
+                     *                           |
+                     *                         (*)P)                                  ----- LEVEL 1
+                     *                         /   \
+                     *                     h-1/     \h
+                     *                       /       \
+                     *                     (X)       (W)                               ------ LEVEL 2
+                     *                              /   \
+                     *                          h-1/     \h-1
+                     *                            /       \
+                     *                         (*)lW)      (*rW)                         ------- LEVEL 3
+                     *
+                     * @note LEVEl - 1 and above has properties withhold.
+                     *
+                     * As, discussed in CASE - 2, why is we are making sure right child of W is RED. Let left rotate at P.
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | ?
+                     *                           |
+                     *                          (W)                                  ----- LEVEL 1
+                     *                         /   \
+                     *                       ?/     \h-1
+                     *                       /       \
+                     *                    (*)P)       (*rW)                               ------ LEVEL 2
+                     *                    /    \
+                     *                h-1/      \h-1
+                     *                  /        \
+                     *             (*)lW)        (X)                                   ------- LEVEL 3
+                     *
+                     * As LEVEL 1 and Up properties are withhold, so making sure that W color takes whatever p color
+                     * was, it will be like p never moved.
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | Balnced when viwed from above.
+                     *                           |
+                     *                         (*)W) // P's Color                       ----- LEVEL 1
+                     *                         /   \
+                     *                       ?/     \h-1
+                     *                       /       \
+                     *                    (*)P)       (*rW)                               ------ LEVEL 2
+                     *                    /    \
+                     *                h-1/      \h-1
+                     *                  /        \
+                     *             (*)lW)        (X)                                   ------- LEVEL 3
+                     *
+                     * As, LEVEL 3 is balanced, let focus on LEVEL 2. The problem is P is Ambiguous.So, let
+                     * remove it ambiguity by black as overall black height should be h. As rW is red, we will
+                     * it also black as to balance black height.
+                     *
+                     * @attention the present tree looks like
+                     *
+                     *                           |
+                     *                           | Balnced when viwed from above.
+                     *                           |
+                     *                         (*)W) // P's Color                       ----- LEVEL 1
+                     *                         /   \
+                     *                       h/     \h (as rW before was RED)
+                     *                       /       \
+                     *                     (P)       (rW)                               ------ LEVEL 2
+                     *                    /    \
+                     *                h-1/      \h-1
+                     *                  /        \
+                     *             (*)lW)        (X)                                   ------- LEVEL 3
+                     *
+                     * As now the overall subtree is balanced. No need further run the loop so let make x as root.
+                     */
+
+                    w->color = p->color;
+                    p->color = w->right->color = false;
+                    this->leftRotate(p);
+                    x = root;
+
+                }
+            } else {
+                auto w{ p->left };
+
+                //Similar Explanation as above.
+
+                if (w->color) {
+                    w->color = false;
+                    this->rightRotate(p);
+                    w = p->left;
+                }
+                if (!w->right->color && !w->left->color) {
+                    w->color = true;
+                    x = p;
+                } else {
+                    if (!w->left->color) {
+                        w->color = true;
+                        w->right->color = false;
+                        this->leftRotate(w);
+                        w = w->p.lock();
+                    }
+                    w->color = p->color;
+                    p->color = w->left->color = false;
+                    this->rightRotate(p);
+                    x = root;
+                }
+            }
+        }
+        x->color = false;
+    }
+    return;
+}
+
 #endif //__RB_TR_NODE__
