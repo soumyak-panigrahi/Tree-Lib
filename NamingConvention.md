@@ -139,12 +139,13 @@ bytes are addressable. As if we think spacewise 7 bits are wasted as bool value 
 to store these extra bits in another data member as to access it.
 
 Note :- bit field only work in a struct or class, you cannot have it outside. As, a struct or class can be padding to be
-        addressable.
+        addressable. And these bit fields doesn't have address.
 
 Ofcourse we cannot get each bit efficency, because it is upto compiler to pad it to be addressable. Our aim if we can make
 out these extra bit we can use it later or can be inherited for argumenting. Sometime, the order in which we write the data
 member matter to it's size.For example, if the size is greater than a byte and less than 4 it will be padded to be 4 and
-it less than 8 padded to be 8 and so on. You can alway test and squeeze out these padded data and use it for later.
+it less than 8 padded to be 8 and so on. You can alway test and squeeze out these padded data and use it for later. For
+more about [alignment](https://en.wikipedia.org/wiki/Data_structure_alignment) and [squeezing out padding](https://docs.microsoft.com/en-us/cpp/preprocessor/pack)
 
 So, we use for the extra bits which we know will be stored in `raw_N` where N is unused bits and make sure you either make it 
 **public or protected** you know why.
