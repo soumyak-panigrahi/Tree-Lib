@@ -131,3 +131,22 @@ So, Base Classes == Interface + Implementation
 
 Note:- In this Library we represent it by prefixing **BASE_**.
 
+## Bitwise Usage
+
+Now, a program to be most efficient, it have to take care of each bit to it's full potential. Let see how struct or class
+padding few btype as roundoff the size to be more accessable. As bit are not addressable, a bool type take 1 byte as only
+bytes are addressable. As if we think spacewise 7 bits are wasted as bool value requires only 1 bit. So, we use bit fields
+to store these extra bits in another data member as to access it.
+
+Note :- bit field only work in a struct or class, you cannot have it outside. As, a struct or class can be padding to be
+        addressable.
+
+Ofcourse we cannot get each bit efficency, because it is upto compiler to pad it to be addressable. Our aim if we can make
+out these extra bit we can use it later or can be inherited for argumenting. Sometime, the order in which we write the data
+member matter to it's size.For example, if the size is greater than a byte and less than 4 it will be padded to be 4 and
+it less than 8 padded to be 8 and so on. You can alway test and squeeze out these padded data and use it for later.
+
+So, we use for the extra bits which we know will be stored in `raw_N` where N is unused bits and make sure you either make it 
+**public or protected** you know why.
+
+tl; dr if extra bits left store it in `raw_N` and make it public or protected. 

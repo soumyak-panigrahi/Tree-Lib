@@ -2,7 +2,7 @@
 
 - [x] Binary Tree Interface
 - [x] Binary Search Tree
-- [ ] Red-Black Tree
+- [x] Red-Black Tree
 - [ ] AVL Tree
 - [ ] Treap
 - [ ] Splay Tree
