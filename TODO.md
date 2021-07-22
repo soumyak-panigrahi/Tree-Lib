@@ -4,5 +4,4 @@
 - [x] Binary Search Tree
 - [x] Red-Black Tree
 - [x] AVL Tree
-- [ ] Treap
-- [ ] Splay Tree
+- [x] Splay Tree

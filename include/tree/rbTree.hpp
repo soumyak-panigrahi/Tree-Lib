@@ -31,6 +31,9 @@ struct RBtrNode : public BASE_RBtrNode<T, __type, RBtrNode<T, __type>>
 template<typename T, typename __type = T, typename node_type = RBtrNode<T, __type>>
 class rbTree : public bsTree<T, __type, node_type>
 {
+    using bsTree<T, __type, node_type>::NIL;
+    using bsTree<T, __type, node_type>::root;
+    using bsTree<T, __type, node_type>::size;
 public:
     rbTree() : bsTree<T, __type, node_type>() { }
     virtual wPtr<node_type> insert(const T&) override;
