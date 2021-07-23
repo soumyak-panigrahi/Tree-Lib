@@ -429,7 +429,7 @@ T rbTree<T, __type, node_type>::remove(const wPtr<node_type>& ptr) noexcept
 {
     if (!ptr.expired()) {
         auto y = ptr.lock();
-        if (x != NIL) {
+        if (y != NIL) {
             auto z{ y }, x{ y };
             bool y_org_color = y->color;
             if (z->left == NIL) {

@@ -1,5 +1,5 @@
-#ifndef __SPLAT_TREE_HPP__
-#define __SPLAT_TREE_HPP__
+#ifndef __SPLAY_TREE_HPP__
+#define __SPLAY_TREE_HPP__
 
 #include "bsTree.hpp"
 #include <memory>
@@ -26,7 +26,7 @@ public:
 };
 
 template<typename T, typename  __type, typename node_type>
-void splayTree<T, __Type, node_type>::splay(const wPtr<node_type>& ptr) noexcept
+void splayTree<T, __type, node_type>::splay(const wPtr<node_type>& ptr) noexcept
 {
     if (!ptr.expired()) {
         auto x{ ptr.lock() }, p{ x->p.lock() };
@@ -42,11 +42,11 @@ void splayTree<T, __Type, node_type>::splay(const wPtr<node_type>& ptr) noexcept
 }
 
 template<typename T, typename  __type, typename node_type>
-wPtr<node_type> splayTree<T, __Type, node_type>::insert(const T& k)
+wPtr<node_type> splayTree<T, __type, node_type>::insert(const T& k)
 {
     auto x = bsTree<T, __type, node_type>::insert(k);
     this->splay(x);
     return x;
 }
 
-#endif //__SPLAT_TREE_HPP__
+#endif //__SPLAY_TREE_HPP__
