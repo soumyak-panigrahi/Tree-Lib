@@ -36,7 +36,7 @@ class avlTree : public bsTree<T, __type, node_type>
     using bsTree<T, __type, node_type>::root;
     using bsTree<T, __type, node_type>::size;
 public:
-    rbTree() : bsTree<T, __type, node_type>() { }
+    avlTree() : bsTree<T, __type, node_type>() { }
     virtual wPtr<node_type> insert(const T&) override;
     virtual T remove(const wPtr<node_type>&) noexcept override;
 protected:

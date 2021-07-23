@@ -21,6 +21,7 @@ class splayTree : public bsTree<T, __type, node_type>
     using bsTree<T, __type, node_type>::root;
     using bsTree<T, __type, node_type>::size;
 public:
+    splayTree() : bsTree<T, __type, node_type>() { }
     virtual void splay(const wPtr<node_type>&) noexcept;
     virtual wPtr<node_type> insert(const T&) override;
 };
