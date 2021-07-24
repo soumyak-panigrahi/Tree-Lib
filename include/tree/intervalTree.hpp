@@ -68,7 +68,142 @@ class intervalTree : public rbTree<T, __Type, node_type>
     using rbTree<T, __type, node_type>::root;
     using rbTree<T, __type, node_type>::size;
 public:
+    intervalTree() : rbTree<T, __type, node_type>() { }
+    virtual void setMax(const wPtr<node_type>&) noexcept;
+    virtual void rightRotate(const wPtr<node_type>&) noexcept override;
+    virtual void leftRotate(const wPtr<node_type>&) noexcept override;
+    virtual wPtr<node_type> intervalInsert(const interval<T>&);
+    virtual interval<T> intervalRemove(const wPtr<node_type>&) noexcept override;
     virtual wPtr<node_type> intervalSearch(const interval<T>&);
 };
+
+template<typename T, typename __type, typename node_type>
+void intervalTree<T, __type, node_type>::rightRotate(const wPtr<node_type>& ptr) noexcept
+{
+    if (!ptr.expired()) {
+        rbTree<T, __type, node_type>::rightRotate(ptr);
+        auto x{ ptr.lock() };
+        this->setMax(x);
+        this->setMax(x->p);
+    }
+    return;
+}
+
+template<typename T, typename __type, typename node_type>
+void intervalTree<T, __type, node_type>::leftRotate(const wPtr<node_type>& ptr) noexcept
+{
+    if (!ptr.expired()) {
+        rbTree<T, __type, node_type>::leftRotate(ptr);
+        auto x{ ptr.lock() };
+        this->setMax(x);
+        this->setMax(x->p);
+    }
+    return;
+}
+
+template<typename T, typename __type, typename node_type>
+void intervalTree<T, __type, node_type>::setMax(const wPtr<node_type>& ptr) noexcept
+{
+    if (!ptr.expired()) {
+        auto x{ ptr.lock() };
+        if ((x->it->high > x->left->max) && (x->it->high > x->right->max))
+            x->max = x->it->high;
+        else if ((x->left->max > x->right->max) && (x->left->max > x->it->high))
+            x->max = x->left->max;
+        else
+            x->max = x->right->max;
+    }
+    return;
+}
+
+template<typename T, typename __type, typename node_type>
+wPtr<node_type> intervalTree<T, __type, node_type>::intervalInsert(const interval<T>& i)
+{
+    auto x{ root }, y{ root };
+    auto max{ i.high }, val{ i.low };
+    while (x != NIL) {
+        y = x;
+        x->max = ((max > x->max) ? max : x->max);
+        if (val < x->data)
+            x = x->left;
+        else
+            x = x->right;
+    }
+    auto z = std::make_shared<node_type>();
+    if (!z)
+        return wPtr<node_type>();
+    z->data = val;
+    z->max = max;
+    z->it = i;
+    z->p = y;
+    z->right = z->left = NIL;
+    if (y == NIL)
+        root = z;
+    else if (val < y->data)
+        y->left = z;
+    else
+        y->right = z;
+    z->color = true;
+    size++;
+    rbTree<T, __type, node_type>::insertFixup(z);
+    return z;
+}
+
+template<typename T, typename __type, typename node_type>
+interval<T> intervalTree<T, __type, node_type>::intervalRemove(const wPtr<node_type>& ptr) noexcept
+{
+    if (!ptr.expired()) {
+        auto x{ ptr.lock() }, y{ x }, z{ x };
+        bool y_orig_color{ y->color };
+        auto removed_data = x->it;
+        if (x != NIL) {
+            if (x->left == NIL) {
+                z = x->right;
+                z->color = x->color;
+                this->transplant(x, x->right);
+            } else if (x->right == NIL) {
+                z = x->left;
+                z->color = x->color;
+                this->transplant(x, x->left)
+            } else {
+                y = this->treeMin(x->right);
+                y_orig_data = y->color;
+                z = y->right;
+                if (y->p.lock() != x) {
+                    this->transplant(y, y->right);
+                    y->left = x->left;
+                    x->left->p = y;
+                }
+                this->transplant(x, y);
+                y->right = x->right;
+                x->right->p = y;
+                y->color = x->color;
+            }
+            y = z->p.lock();
+            while (y == NIL) {
+                this->setMax(y);
+                y = y->p.lock();
+            }
+            if (!y_orig_color)
+                rbTree<T, __type, node_type>::removeFixup(z);
+            size--;
+        }
+        return removed_data;
+    }
+    return interval<T>();
+}
+
+template<typename T, typename __type, typename node_type>
+wPtr<node_type> intervalTree<T, __type, node_type>::intervalSearch(const interval<T>& i)
+{
+    auto x{ root };
+    while (x != NIL && !(x->it.overlaps(i))) {
+        if (x->left != NIL && x->left->max > i->low)
+            x = x->left;
+        else
+            x = x->right;
+    }
+    return x;
+}
 
 #endif //__INTERVAL_TREE__
