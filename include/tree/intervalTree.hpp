@@ -24,6 +24,15 @@ struct interval
     unsigned char type : 2, // [ or ] - 0 and ( or ) - 1 ==> [l,h] - 00 , [l,h) - 01 , (l,h] - 10 , (l,h) - 11
         raw_6 : 6; // Can be used to some other thing....
     interval(const T& l = T{}, const T& h = T{}, unsigned char t = 0) : low{ l }, high{ h }, type{ t }, raw_6{ 0 } { }
+    void forceOrder()
+    {
+        if (low > high) {
+            auto temp{ high };
+            high = low;
+            low = temp;
+        }
+        return;
+    }
     bool subSet(const interval<T>& x)
     {
         if ((x.low < low) && (high < x.high))
@@ -40,6 +49,7 @@ struct interval
         return x.subSet(*this);
     }
     bool overlaps(const interval<T>& x) { return !((*this > x) || (*this < x)); }
+    bool overlaps(const T& x) { return (x > low && x < high) || (x == low && !(type & (1 << 1))) || (x == high && !(type & 1)) }
     bool operator == (const interval<T>& x) { return ((type == x.type) && ((low == x.low) && (high == x.high))); }
     bool operator != (const interval<T>& x) { return !(*this == x); }
     bool operator > (const interval<T>& x)
@@ -75,6 +85,7 @@ public:
     virtual wPtr<node_type> intervalInsert(const interval<T>&);
     virtual interval<T> intervalRemove(const wPtr<node_type>&) noexcept override;
     virtual wPtr<node_type> intervalSearch(const interval<T>&);
+    virtual wPtr<node_type> intervalExactSearch(const interval<T>&);
 };
 
 template<typename T, typename __type, typename node_type>
@@ -120,6 +131,7 @@ template<typename T, typename __type, typename node_type>
 wPtr<node_type> intervalTree<T, __type, node_type>::intervalInsert(const interval<T>& i)
 {
     auto x{ root }, y{ root };
+    i.forceOrder();
     auto max{ i.high }, val{ i.low };
     while (x != NIL) {
         y = x;
@@ -197,11 +209,28 @@ template<typename T, typename __type, typename node_type>
 wPtr<node_type> intervalTree<T, __type, node_type>::intervalSearch(const interval<T>& i)
 {
     auto x{ root };
+    i.forceOrder();
     while (x != NIL && !(x->it.overlaps(i))) {
         if (x->left != NIL && x->left->max > i->low)
             x = x->left;
         else
             x = x->right;
+    }
+    return x;
+}
+
+template<typename T, typename __type, typename node_type>
+wPtr<node_type> intervalTree<T, __type, node_type>::intervalExactSearch(const interval<T>& i)
+{
+    auto x{ root };
+    i.forceOrder();
+    while (x != NIL && (x->it != i)) {
+        if (x->data > i.low && (x->left != NIL && x->left->max > i.high))
+            x = x->left;
+        else if (x->data < i.low && (x->right != NIL && x->right->max > i.high))
+            x = x->right
+        else
+            x = NIL;
     }
     return x;
 }
