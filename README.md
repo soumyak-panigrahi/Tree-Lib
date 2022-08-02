@@ -1,4 +1,4 @@
-# Tree Libbrary
+# Tree Library
 
 Has Implemented Different Kind of BSTs, More Specifically
 
