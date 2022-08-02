@@ -6,7 +6,7 @@ Has Implemented Different Kind of BSTs, More Specifically
 - [Red-Black Tree](/include/tree/rbTree.hpp)
 - [AVL Tree](/include/tree/avlTree.hpp)
 - [Splay Tree](/include/tree/splayTree.hpp)
-- [Intervel Tree](/include/tree/intervelTree.hpp) (Special Usage of Red-Black Tree)
+- [Interval Tree](/include/tree/intervalTree.hpp) (Special Usage of Red-Black Tree)
 
 For any Library User, please refer [Nameing Convention](/NamingConvention.md), for usage of different tree.
 
